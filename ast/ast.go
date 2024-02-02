@@ -15,7 +15,7 @@ func newExpression(op Operator, left *Ast, right *Ast) *Ast {
 	return &Ast{op: op, left: left, right: right}
 }
 
-func newValue(value float64) *Ast {
+func NewValue(value float64) *Ast {
 	return &Ast{value: value}
 }
 
@@ -37,7 +37,7 @@ func (a *Ast) Append(op Operator, expr *Ast) {
 		*a = *newExpression(op, &left, expr)
 	} else {
 		right := *a.right
-		a.right = newExpression(op, expr, &right)
+		a.right = newExpression(op, &right, expr)
 	}
 }
 

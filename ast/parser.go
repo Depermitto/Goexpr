@@ -1,27 +1,56 @@
 package ast
 
 import (
+	"Goexpr/lists"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
 func Parse(expr string) (tree *Ast) {
-	num, expr := ExtractNum(expr)
-	tree = newValue(num)
-	if len(expr) > 0 && IsOperator(rune(expr[0])) {
-		op, expr := Operator(expr[0]), expr[1:]
-		tree.Append(op, Parse(expr))
+	var opStack lists.LinkedList[Operator]
+	var num float64
+
+	if expr[0] == '(' {
+		num, expr = extractPar(expr)
+	} else {
+		num, expr = extractNum(expr)
 	}
+
+	tree = NewValue(num)
+	for len(expr) > 0 {
+		c := rune(expr[0])
+		if IsOperator(c) {
+			opStack.PushTail(Operator(c))
+			expr = expr[1:]
+		} else if op, err := opStack.PopTail(); err == nil {
+			if c == '(' {
+				inside, rest := extractPar(expr)
+				tree.Append(op, NewValue(inside))
+				expr = rest
+			} else {
+				num, expr = extractNum(expr)
+				tree.Append(op, NewValue(num))
+			}
+		} else {
+			return nil
+		}
+	}
+
 	return tree
 }
 
-func ExtractNum(s string) (num float64, rest string) {
+func extractPar(s string) (num float64, rest string) {
+	inside, rest, found := strings.Cut(s[1:], ")")
+	if !found {
+		return 0, ""
+	}
+	return Parse(inside).Eval(), rest
+}
+
+func extractNum(s string) (num float64, rest string) {
 	i := 0
-	for unicode.IsDigit(rune(s[i])) || s[i] == '.' {
-		i++
-		if i >= len(s) {
-			break
-		}
+	for ; i < len(s) && (unicode.IsDigit(rune(s[i])) || s[i] == '.'); i++ {
 	}
 	num, _ = strconv.ParseFloat(s[:i], 64)
 	return num, s[i:]
