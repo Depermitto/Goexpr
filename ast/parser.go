@@ -8,16 +8,24 @@ import (
 )
 
 func Parse(expr string) (tree *Ast) {
+	if strings.Count(expr, "(") != strings.Count(expr, ")") {
+		return nil
+	}
+	expr = strings.TrimSpace(expr)
+	expr = strings.ReplaceAll(expr, " ", "")
+	return parse(expr)
+}
+
+func parse(expr string) *Ast {
 	var opStack lists.LinkedList[Operator]
 	var num float64
-
 	if expr[0] == '(' {
 		num, expr = extractPar(expr)
 	} else {
 		num, expr = extractNum(expr)
 	}
 
-	tree = NewValue(num)
+	tree := NewValue(num)
 	for len(expr) > 0 {
 		c := rune(expr[0])
 		if IsOperator(c) {
@@ -41,11 +49,17 @@ func Parse(expr string) (tree *Ast) {
 }
 
 func extractPar(s string) (num float64, rest string) {
-	inside, rest, found := strings.Cut(s[1:], ")")
-	if !found {
-		return 0, ""
+	n := 1
+	i := 1
+	for ; i < len(s) && n != 0; i++ {
+		if s[i] == '(' {
+			n++
+		} else if s[i] == ')' {
+			n--
+		}
 	}
-	return Parse(inside).Eval(), rest
+	inside, rest := s[1:i-1], s[i:]
+	return parse(inside).Eval(), rest
 }
 
 func extractNum(s string) (num float64, rest string) {
