@@ -1,0 +1,4 @@
+#+title: Goexpr
+
+* This little CLI program is a test for [[https://en.wikipedia.org/wiki/Abstract_syntax_tree?useskin=vector][Ast]] capabilities for calculating simple math problems.
+Features a simple parser of mine own creation. To run the program simply ~go run main.go~.
