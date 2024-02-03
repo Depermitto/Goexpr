@@ -1,4 +1,5 @@
-#+title: Goexpr
+#+title: Goexpr is a golang CLI calculator
 
-* This little CLI program is a test for [[https://en.wikipedia.org/wiki/Abstract_syntax_tree?useskin=vector][Ast]] capabilities in calculating simple math problems.
+This little CLI program is a test for [[https://en.wikipedia.org/wiki/Abstract_syntax_tree?useskin=vector][Ast]] capabilities in calculating simple math problems.
+
 Works as a normal calculator with operator priority and parenthesis. Features a simple parser of mine own creation. To run the program simply ~go run main.go~.
