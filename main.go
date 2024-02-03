@@ -2,15 +2,20 @@ package main
 
 import (
 	"Goexpr/ast"
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 )
 
 func main() {
-	calc := ast.Parse("(1-10)/(2+1) % 2")
-	if calc == nil {
-		log.Fatalln("incorrect construction")
+	scanner := bufio.NewScanner(os.Stdin)
+	for fmt.Print("Expr: "); scanner.Scan(); fmt.Print("Expr: ") {
+		calc := ast.Parse(scanner.Text())
+		if calc == nil {
+			log.Println("incorrect construction")
+			continue
+		}
+		fmt.Println(calc.Eval())
 	}
-	fmt.Println(calc)
-	fmt.Println(calc.Eval())
 }
